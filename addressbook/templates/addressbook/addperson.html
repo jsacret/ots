@@ -1,0 +1,11 @@
+{% extends 'addressbook/base.html' %}
+
+{% block content %}
+<div class="col-sm-8">
+	<form action="{% url 'add_person'%}" method="post">
+		{% csrf_token %}
+		{{ form.as_p }}
+		<input type="submit" value="add person"/>
+	</form>
+</div>
+{% endblock %}

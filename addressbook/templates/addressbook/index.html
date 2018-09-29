@@ -1,0 +1,70 @@
+{% extends 'addressbook/base.html' %}
+
+{% block content %}
+<div class="row">
+	<form action="{% url 'index' %}">
+		<input type="text" placeholder="Search..." name="filter" />
+		<input type="submit" value="Search" />
+	</form>
+	<table class="table table-striped">
+		<thead class="thead-light">
+			<tr>
+				<th>Name</th>
+				<th>Address</th>
+				<th>Email</th>
+				<th>Phone</th>
+				<th></th>
+			</tr>
+		</thead>
+		<tbody>
+		{% for p in people %}
+			<tr data-id="{{ p.id }}" onclick="">
+				<td>{{ p.full_name }}</td>
+				<td>{{ p.street_address }}</td>
+				<td>{{ p.email_address }}</td>
+				<td>{{ p.phone_number }}</td>
+				<td><input type="button" onclick="person.delete('{% url "delete_person" p.id %}')" class="btn btn-danger" value="delete"/></td>
+			</tr>
+		{% endfor %}
+		</tbody>
+	</table>
+</div>
+<div id="myModal" class="modal fade" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Delete Person from Address Book</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to delete: </p>
+      </div>
+      <div class="modal-footer">
+      	<form id='deleteForm' method="POST">
+      		{% csrf_token %}
+        	<button class="btn btn-danger">Delete</button>
+   		</form>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+{%  endblock %}
+{% block javascript %}
+<script>
+	var person = (function() {
+		const deleteForm = document.getElementById('deleteForm');
+		return {
+			delete: function(url) {
+				$('#myModal').modal('show');
+				if(deleteForm){
+					deleteForm.removeAttribute("action");
+					deleteForm.setAttribute("action", url)
+				}
+			}
+		}
+	})();
+</script>
+{% endblock %}
