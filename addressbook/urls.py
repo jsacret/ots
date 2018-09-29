@@ -10,5 +10,7 @@ urlpatterns = [
 	url(r'^$', views.index, name='index'),
 	url(r'^(?P<person_id>[0-9]+)$', views.details, name='details'),
 	url(r'^addperson$', views.add_person, name='add_person'),
-	url(r'^person/(?P<person_id>[0-9]+)/delete$', views.delete_person, name='delete_person')
+	url(r'^person/(?P<person_id>[0-9]+)/delete$', views.delete_person, name='delete_person'),
+	url(r'^person/(?P<person_id>[0-9]+)/update$', views.update_person, name='update_person'),
+	url(r'^personlist$', views.person_table, name='person_table')
 ]

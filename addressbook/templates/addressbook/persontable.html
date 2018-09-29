@@ -1,0 +1,24 @@
+	
+<table class="table table-striped">
+	<thead class="thead-light">
+		<tr>
+			<th>Name</th>
+			<th>Address</th>
+			<th>Email</th>
+			<th>Phone</th>
+			<th></th>
+		</tr>
+	</thead>
+	<tbody>
+	{% for p in people %}
+		<tr data-id="{{ p.id }}" onclick="">
+			<td><a href="{% url 'details' p.id %}">{{ p.full_name }}</a></td>
+			<td>{{ p.street_address }}</td>
+			<td>{{ p.email_address }}</td>
+			<td>{{ p.phone_number }}</td>
+			<td><input type="button" onclick="person.delete('{% url "delete_person" p.id %}')" class="btn btn-danger" value="delete"/></td>
+		</tr>
+	{% endfor %}
+	</tbody>
+</table>
+<label>Total Count: {{ total_count }}</label>

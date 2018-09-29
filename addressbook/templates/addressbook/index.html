@@ -2,32 +2,19 @@
 
 {% block content %}
 <div class="row">
-	<form action="{% url 'index' %}">
-		<input type="text" placeholder="Search..." name="filter" />
-		<input type="submit" value="Search" />
-	</form>
-	<table class="table table-striped">
-		<thead class="thead-light">
-			<tr>
-				<th>Name</th>
-				<th>Address</th>
-				<th>Email</th>
-				<th>Phone</th>
-				<th></th>
-			</tr>
-		</thead>
-		<tbody>
-		{% for p in people %}
-			<tr data-id="{{ p.id }}" onclick="">
-				<td>{{ p.full_name }}</td>
-				<td>{{ p.street_address }}</td>
-				<td>{{ p.email_address }}</td>
-				<td>{{ p.phone_number }}</td>
-				<td><input type="button" onclick="person.delete('{% url "delete_person" p.id %}')" class="btn btn-danger" value="delete"/></td>
-			</tr>
-		{% endfor %}
-		</tbody>
-	</table>
+	<div class="col-sm-12">
+		<input id="search" type="text" placeholder="Search..." name="filter" />
+		<label>page count</label>
+		<select id="pageCount">
+			<option value='5'>5</option>
+			<option value='10'>10</option>
+			<option value='20'>20</option>
+		</select>
+	</div>
+</div>
+<div class="row">
+	<div class="col-sm-12" id="person-table">
+	</div>
 </div>
 <div id="myModal" class="modal fade" tabindex="-1" role="dialog">
   <div class="modal-dialog" role="document">
@@ -56,15 +43,50 @@
 <script>
 	var person = (function() {
 		const deleteForm = document.getElementById('deleteForm');
+		this.pagecount = 5;
+		this.page = 0;
+		this.filter = '';
 		return {
+			setPageCount(pg){
+				pagecount = pg;
+			},
+			setFilter(filt){
+				filter = filt;
+			},
 			delete: function(url) {
 				$('#myModal').modal('show');
 				if(deleteForm){
 					deleteForm.removeAttribute("action");
 					deleteForm.setAttribute("action", url)
 				}
+			},
+			getPersonList: function(){
+				return $.ajax({
+					method: 'GET',
+					url: `personlist?page=${page}&pagecount=${pagecount}&filter=${filter}`
+				}).done(function(data){
+					$('#person-table').html(data);
+					return data;
+				})
 			}
 		}
 	})();
+	$(document).ready(function(){
+		$.ajax({
+			method: 'GET',
+			url: '{% url "person_table"%}'
+		}).done(function(data){
+			$('#person-table').html(data);
+		})
+		$('#pageCount').change(function(){
+			person.setPageCount($(this).val());
+			person.getPersonList();
+		})
+		$('#search').keyup(function() {
+			let filter = $(this).val() ? $(this).val() : '';
+			person.setFilter(filter);
+			person.getPersonList();
+		});
+	});
 </script>
 {% endblock %}
